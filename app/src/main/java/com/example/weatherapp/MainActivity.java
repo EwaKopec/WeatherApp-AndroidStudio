@@ -33,30 +33,25 @@ public class MainActivity extends AppCompatActivity {
     String latitude = "50.2833";
     String longitude = "18.670002";
     String tempDay, tempNight, pressure, clouds, feels_like_day, feels_like_night, wind_speed, rain;
-    private String date;
 
-    private TextView dateTimeDisplay;
     private TextView town;
     private TextView temp;
     private TextView desc;
     private ImageView image;
-    private Calendar calendar;
-    private SimpleDateFormat dateFormat;
 
 
-
-    private static final int MY_PERMISSION_REQUEST_LOCATIONS = 1;
+    //private static final int MY_PERMISSION_REQUEST_LOCATIONS = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dateTimeDisplay = findViewById(R.id.dateTextView);
+        TextView dateTimeDisplay = findViewById(R.id.dateTextView);
 
         //pobranie aktualnej daty i ustawienie jej
-        calendar = Calendar.getInstance();
-        dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        date = dateFormat.format(calendar.getTime());
+        Calendar calendar = Calendar.getInstance();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String date = dateFormat.format(calendar.getTime());
         dateTimeDisplay.setText(date);
         image = findViewById(R.id.wheather_image);
         town = findViewById(R.id.town);
@@ -65,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         cityText = findViewById(R.id.cityText);
         szukaj = findViewById(R.id.buttonpobierz);
         szukaj.setOnClickListener(new View.OnClickListener(){
+            @SuppressLint("ShowToast")
             @Override
             public void onClick(View v) {
                 try {
@@ -78,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("SetTextI18n")
     private void getData() {
         try {
             URL PogodynkaEndPoint = new URL("https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&units=metric&appid=6bda4862dcc638f53d7a4758b0c6efab&lang=pl");
@@ -107,10 +102,9 @@ public class MainActivity extends AppCompatActivity {
                System.out.println("Todays temp: " + tempDay + " night temp: " + tempNight);
                System.out.println("rain: " + rain + " clouds: " + clouds);
 
-               setImage(Double.parseDouble(rain), Double.parseDouble(clouds), Double.parseDouble(tempDay), Double.parseDouble(wind_speed));
-            } else {
-                    //error
-            }
+               setImage(Double.parseDouble(rain), Double.parseDouble(clouds), Double.parseDouble(tempDay));
+            }  //error
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getCity() throws IOException {
-        cityName = (String) cityText.getText().toString();
+        cityName = cityText.getText().toString();
         System.out.println(cityName); //jest git
         cityLocalization(cityName);
         town.setText(cityName);
@@ -139,25 +133,24 @@ public class MainActivity extends AppCompatActivity {
         while (ads.size() == 0) {
             ads = gc.getFromLocationName(city, 5);
         }
-        if (ads.size() > 0) {
-            Address addr = ads.get(0);
-            latitude = String.valueOf(addr.getLatitude());
-            longitude = String.valueOf(addr.getLongitude());
-            System.out.println(ads.toString());
-            System.out.println("Szerokość: " + latitude);
-            System.out.println("Długość: " + longitude);
-        }
+        ads.size();
+        Address addr = ads.get(0);
+        latitude = String.valueOf(addr.getLatitude());
+        longitude = String.valueOf(addr.getLongitude());
+        System.out.println(ads.toString());
+        System.out.println("Szerokość: " + latitude);
+        System.out.println("Długość: " + longitude);
     }
 
     public void setForecast(){
         String temperature = tempDay + " / " + tempNight + "°C";
         System.out.println(temperature);
-        String description = "Ciśnienie: " + pressure + "hPa  " + "   Wiatr: " + wind_speed + "km/h" + "  Opady: " + rain + "%" + "    Zachmurzenie: " + clouds + "%";
+        String description = " Ciśnienie: " + pressure + "hPa  " + "   Wiatr: " + wind_speed + "km/h" + "     Opady: " + rain + "%" + "      Zachmurzenie: " + clouds + "%";
         temp.setText(temperature);
         desc.setText(description);
     }
 
-    public void setImage(double rain, double clouds, double temp, double wind){
+    public void setImage(double rain, double clouds, double temp){
         if(rain == 0 && clouds < 15){
             image.setImageResource(R.drawable.sun);
         } else if(rain == 0 && clouds < 50 ){
@@ -168,9 +161,9 @@ public class MainActivity extends AppCompatActivity {
             image.setImageResource(R.drawable.clouds);
         } else if( rain > 60){
             image.setImageResource(R.drawable.rain);
-        } else if(rain > 60 && clouds > 70 && wind > 50 ){
+        } else if(rain > 60 && clouds > 70 ){
             image.setImageResource(R.drawable.rain_and_storm);
-        } else if( temp < -2 && clouds > 20){
+        } else if( temp < -2 && clouds > 30){
             image.setImageResource(R.drawable.another);
         } else {
             image.setImageResource(R.drawable.wheather);
