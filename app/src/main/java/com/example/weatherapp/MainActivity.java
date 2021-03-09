@@ -150,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setForecast(){
-        String temperature = tempDay + "/" + tempNight + "°C  " + feels_like_day + "/" + feels_like_night +"°C";
+        String temperature = tempDay + " / " + tempNight + "°C";
         System.out.println(temperature);
-        String description = "Ciśnienie: " + pressure + "hPa  " + "Wiatr: " + wind_speed + "km/h" + "  Opady: " + rain + "%" + "  Zachmurzenie: " + clouds + "%";
+        String description = "Ciśnienie: " + pressure + "hPa  " + "   Wiatr: " + wind_speed + "km/h" + "  Opady: " + rain + "%" + "    Zachmurzenie: " + clouds + "%";
         temp.setText(temperature);
         desc.setText(description);
     }
